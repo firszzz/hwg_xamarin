@@ -19,7 +19,6 @@ namespace hwg_ll
             List<Coord_Response> coords = JsonConvert.DeserializeObject<List<Coord_Response>>(await Get_coord());
             double lat = coords[0].lat;
             double lon = coords[0].lon;
-            Console.WriteLine(lat + "  " + lon);
 
             string curr_weather_rq = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat.ToString() + "&lon=" + lon.ToString() + "&appid=" + appid;
 
