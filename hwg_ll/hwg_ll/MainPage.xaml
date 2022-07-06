@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="hwg_ll.MainPage">
+
+    <StackLayout>
+        <StackLayout x:Name="newlay">
+            <StackLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="#C8C49C" Offset=".1"></GradientStop>
+                    <GradientStop Color="#3576A3" Offset="1"></GradientStop>
+                </LinearGradientBrush>
+            </StackLayout.Background>
+            <Frame BorderColor="#fff"  Margin="10" HeightRequest="750">
+                <Frame.Background>
+                    <LinearGradientBrush EndPoint="0,1">
+                        <GradientStop Color="#C8C49C" Offset=".1"></GradientStop>
+                        <GradientStop Color="#3576A3" Offset="1"></GradientStop>
+                    </LinearGradientBrush>
+                </Frame.Background>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="130"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="125"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="150"/>
+                    </Grid.RowDefinitions>
+
+                    <Frame BackgroundColor="Transparent" CornerRadius="0" Grid.Row="0">
+                        <Label Text="null" x:Name="city" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="White" FontSize="42" FontAttributes="Bold"/>
+                    </Frame>
+
+                    <StackLayout  Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Start" Orientation="Horizontal">
+                        <Label Text="null" x:Name="temp" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="72" FontAttributes="Bold" TextColor="White"/>
+                        <Label Text="° C" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="72" FontAttributes="Bold" TextColor="White"/>
+                    </StackLayout>
+                    <Label Text="null" x:Name="datetime" HorizontalTextAlignment="Center" FontSize="28" TextColor="White"  Grid.Row="2"/>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="3">
+                        <Label Text="null" x:Name="weather" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="36" TextColor="White"  />
+                        <Image x:Name="img_weather" VerticalOptions="Center"></Image>
+                    </StackLayout>
+                    <Image x:Name="propeller" Source="propeller.png" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="4"/>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center"  Grid.Row="5">
+                        <StackLayout  Margin="0, 0, 50, 0" Orientation="Horizontal" HorizontalOptions="Center">
+                            <Label Text="💧" FontSize="24" VerticalTextAlignment="Center"></Label>
+                            <Label Text="null" x:Name="humidity" VerticalTextAlignment="Center" FontSize="24" TextColor="White" FontAttributes="Bold"/>
+                        </StackLayout>
+                        <StackLayout Margin="50, 0, 0, 0" Orientation="Vertical" VerticalOptions="Center">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                                <Image x:Name="arrow" Source="arrow.png" WidthRequest="24" VerticalOptions="Center"/>
+                                <Label Text="null" x:Name="wind_dir" HorizontalTextAlignment="Center" FontSize="24" FontAttributes="Bold" TextColor="White"/>
+                            </StackLayout>
+                            <Label Text="null" x:Name="wind" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontAttributes="Bold" FontSize="24" TextColor="White"/>
+                        </StackLayout>
+                    </StackLayout>
+                    <StackLayout Grid.Row="6" VerticalOptions="EndAndExpand">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                            <Button Text="Enable animation" x:Name="anim_btn" Clicked="Anim_propeller" TextColor="White" BackgroundColor="Transparent" BorderColor="White" BorderWidth="1"/>
+                            <Button Text="Share" x:Name="share_btn" Clicked="Share_info" TextColor="White" BackgroundColor="Transparent" BorderColor="White" BorderWidth="1"></Button>
+                        </StackLayout>
+                        <Button Text="Pick city" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="White"/>
+                    </StackLayout>
+                </Grid>
+            </Frame>
+        </StackLayout>
+    </StackLayout>
+
+</ContentPage>
