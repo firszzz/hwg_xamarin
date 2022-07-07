@@ -21,16 +21,16 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="100"/>
-                        <RowDefinition Height="130"/>
+                        <RowDefinition Height="100"/>
                         <RowDefinition Height="30"/>
-                        <RowDefinition Height="125"/>
-                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="70"/>
                         <RowDefinition Height="100"/>
                         <RowDefinition Height="150"/>
+                        <RowDefinition Height="100"/>
                     </Grid.RowDefinitions>
 
                     <Frame BackgroundColor="Transparent" CornerRadius="0" Grid.Row="0">
-                        <Label Text="null" x:Name="city" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="White" FontSize="42" FontAttributes="Bold"/>
+                        <Label Text="null" x:Name="city_name" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="White" FontSize="42" FontAttributes="Bold"/>
                     </Frame>
 
                     <StackLayout  Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Start" Orientation="Horizontal">
@@ -42,13 +42,13 @@
                         <Label Text="null" x:Name="weather" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="36" TextColor="White"  />
                         <Image x:Name="img_weather" VerticalOptions="Center"></Image>
                     </StackLayout>
-                    <Image x:Name="propeller" Source="propeller.png" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="4"/>
-                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center"  Grid.Row="5">
-                        <StackLayout  Margin="0, 0, 50, 0" Orientation="Horizontal" HorizontalOptions="Center">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center"  Grid.Row="4">
+                        <StackLayout  Margin="0, 0, 25, 0" Orientation="Horizontal" HorizontalOptions="Center">
                             <Label Text="💧" FontSize="24" VerticalTextAlignment="Center"></Label>
                             <Label Text="null" x:Name="humidity" VerticalTextAlignment="Center" FontSize="24" TextColor="White" FontAttributes="Bold"/>
                         </StackLayout>
-                        <StackLayout Margin="50, 0, 0, 0" Orientation="Vertical" VerticalOptions="Center">
+                        <Image x:Name="propeller" Source="propeller.png" VerticalOptions="Center" HorizontalOptions="Center"/>
+                        <StackLayout Margin="25, 0, 0, 0" Orientation="Vertical" VerticalOptions="Center">
                             <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
                                 <Image x:Name="arrow" Source="arrow.png" WidthRequest="24" VerticalOptions="Center"/>
                                 <Label Text="null" x:Name="wind_dir" HorizontalTextAlignment="Center" FontSize="24" FontAttributes="Bold" TextColor="White"/>
@@ -56,12 +56,27 @@
                             <Label Text="null" x:Name="wind" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontAttributes="Bold" FontSize="24" TextColor="White"/>
                         </StackLayout>
                     </StackLayout>
-                    <StackLayout Grid.Row="6" VerticalOptions="EndAndExpand">
+                    <StackLayout x:Name="sun_lay" Grid.Row="5">
+                        <Grid>
+                            <Image Source="ss_line.png" x:Name="ss_line" HeightRequest="125"/>
+                            <StackLayout>
+                                <Image x:Name="sun" Source="sun.png" WidthRequest="50"/>
+                            </StackLayout>
+                        </Grid>
                         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                            <Button Text="Enable animation" x:Name="anim_btn" Clicked="Anim_propeller" TextColor="White" BackgroundColor="Transparent" BorderColor="White" BorderWidth="1"/>
-                            <Button Text="Share" x:Name="share_btn" Clicked="Share_info" TextColor="White" BackgroundColor="Transparent" BorderColor="White" BorderWidth="1"></Button>
+                            <Label x:Name="sunrise_time" Text="05:00" TextColor="White" Grid.Column="0" Margin="0, 0, 100, 0"/>
+                            <Label x:Name="sunset_time" Text="20:00" TextColor="White" Grid.Column="1" Margin="100, 0, 0, 0"/>
                         </StackLayout>
-                        <Button Text="Pick city" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="White"/>
+                    </StackLayout>
+                    <StackLayout Grid.Row="6" VerticalOptions="EndAndExpand"  Margin="0, 30, 0, 0">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+                            <CheckBox x:Name="anim_cb" Color="White" CheckedChanged="Anim_propeller"/>
+                            <Label x:Name="text_cb" Text="disable animation" VerticalTextAlignment="Center" TextColor="White"/>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                            <Button Text="Pick city" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="White" Clicked="PickCity"/>
+                            <Button Text="Share" x:Name="share_btn" Clicked="Share_info" TextColor="White" BackgroundColor="Transparent" BorderColor="White" BorderWidth="1"/>
+                        </StackLayout>
                     </StackLayout>
                 </Grid>
             </Frame>

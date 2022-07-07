@@ -4,26 +4,10 @@ using System.Text;
 
 namespace hwg_ll
 {
-    public class Coord_Response
-    {
-        public string name { get; set; }
-        public Local_names local_names { get; set; }
-        public double lat { get; set; }
-        public double lon { get; set; }
-        public string country { get; set; }
-        public string state { get; set; }
-    }
-    public class Local_names
-    {
-        public string en { get; set; }
-        public string ru { get; set; }
-    }
-
     public class Weather_response
     {
         public Coord coord { get; set; }
         public Weather[] weather { get; set; }
-        public string basee { get; set; }
         public Main_W main { get; set; }
         public float visibility { get; set; }
         public Wind wind { get; set; }
@@ -37,9 +21,8 @@ namespace hwg_ll
     }
     public class Coord
     {
-        public double lat { get; set; }
         public double lon { get; set; }
-
+        public double lat { get; set; }
     }
     public class Weather
     {
