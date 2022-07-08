@@ -65,8 +65,8 @@
                             </StackLayout>
                         </Grid>
                         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                            <Label x:Name="sunrise_time" Text="05:00" TextColor="White" Grid.Column="0" Margin="0, 0, 100, 0"/>
-                            <Label x:Name="sunset_time" Text="20:00" TextColor="White" Grid.Column="1" Margin="100, 0, 0, 0"/>
+                            <Label x:Name="sunrise_time" TextColor="White" Grid.Column="0" Margin="0, 0, 100, 0"/>
+                            <Label x:Name="sunset_time" TextColor="White" Grid.Column="1" Margin="100, 0, 0, 0"/>
                         </StackLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="6" VerticalOptions="EndAndExpand"  Margin="0, 30, 0, 0">

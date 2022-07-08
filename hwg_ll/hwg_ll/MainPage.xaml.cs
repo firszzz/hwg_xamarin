@@ -9,9 +9,14 @@ namespace hwg_ll
     public partial class MainPage : ContentPage
     {
         float speed;
-        bool anim = false;
         public string city = new CityData().City;
         readonly APIHelper aPIHelper = new APIHelper();
+        CancellationTokenSource cts;
+
+        public class CityData
+        {
+            public string City { get; set; } = "Moscow";
+        }
 
         private void PickCity(object sender, EventArgs e)
         {
@@ -24,7 +29,6 @@ namespace hwg_ll
             });
         }
 
-        CancellationTokenSource cts;
         private async void GetCoord()
         {
             try
@@ -61,22 +65,16 @@ namespace hwg_ll
             }
         }
 
-        public class CityData
+        public void Anim_propeller(object sender, System.EventArgs e)
         {
-            public string City { get; set; } = "Moscow";
-        }
-
-        public async void Anim_propeller(object sender, System.EventArgs e)
-        {
-            anim = cb_anim.IsChecked;
-            int final_speed = (int)speed * 500;
+            int final_speed = (int)speed * 1000;
             
-            if (anim)
+            if (cb_anim.IsChecked)
             {
                 cb_label.Text = "Animation is enabled";
                 rotate();
             }
-            else if (!anim)
+            else if (!cb_anim.IsChecked)
             {
                 cb_label.Text = "Animation is disabled";
                 ViewExtensions.CancelAnimations(propeller);
@@ -84,7 +82,7 @@ namespace hwg_ll
 
             async void rotate()
             {
-                while (anim)
+                while (cb_anim.IsChecked)
                 {
                     await propeller.RelRotateTo(360, (uint)final_speed);
                 }
@@ -110,6 +108,7 @@ namespace hwg_ll
         {
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+
             string dt = dtDateTime.ToString();
             string[] dtL = dt.Split(' ');
 
@@ -120,9 +119,9 @@ namespace hwg_ll
         {
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+
             string dt = dtDateTime.ToString();
             string[] dtL = dt.Split(' ');
-
             string[] hm = dtL[1].Split(':');
 
             return hm[0] + ":" + hm[1] + " " + dtL[2];
@@ -145,23 +144,33 @@ namespace hwg_ll
             });
         }
 
+        public void CalculateSS(double dt, double sr, double ss)
+        {
+            
+        }
+
         public async void GetResponse(string city)
         {
             if (CheckInternetConnection())
             {
                 string result = await aPIHelper.Get_response(city);
+
                 JObject json = JObject.Parse(result);
 
-                string img_icon = "https://openweathermap.org/img/wn/" + json["weather"][0]["icon"].ToString() + "@4x.png";
-                int wind_deg = int.Parse(json["wind"]["deg"].ToString());
                 string wind_speed = json["wind"]["speed"].ToString();
+                string img_icon = "https://openweathermap.org/img/wn/" + json["weather"][0]["icon"].ToString() + "@4x.png";
+
+                int wind_deg = int.Parse(json["wind"]["deg"].ToString());
+
                 double sunrise = double.Parse(json["sys"]["sunrise"].ToString()) + 36000;
                 double sunset = double.Parse(json["sys"]["sunset"].ToString()) + 36000;
                 double dt = double.Parse(json["dt"].ToString()) + 36000;
 
-                speed = float.Parse(wind_speed);
-                city_name.Text = json["name"].ToString();
                 float tempCel = float.Parse(json["main"]["temp"].ToString());
+
+                speed = float.Parse(wind_speed);
+
+                city_name.Text = json["name"].ToString();
                 temp.Text = Math.Round(tempCel - 273.15, 1).ToString();
                 weather.Text = json["weather"][0]["main"].ToString();
                 img_weather.Source = new UriImageSource
@@ -181,7 +190,7 @@ namespace hwg_ll
                 {
                     if ((sunrise + sunset) / 2 - dt > 13718)
                     {
-                        sun.TranslationX = -115;
+                        sun.TranslationX = -120;
                         sun.TranslationY = 75;
                     }
                     else if ((sunrise + sunset) / 2 - dt < 13718)
@@ -194,7 +203,7 @@ namespace hwg_ll
                 {
                     if (dt - (sunrise + sunset) / 2 > 13718)
                     {
-                        sun.TranslationX = 115;
+                        sun.TranslationX = 120;
                         sun.TranslationY = 75;
                     }
                     else if (dt - (sunrise + sunset) / 2 < 13718)
@@ -210,7 +219,7 @@ namespace hwg_ll
                     sun.TranslationY = 100;
                 }
             }
-            else return;
+            else { return; }
 
             newlay.ResolveLayoutChanges();
         }
@@ -218,8 +227,9 @@ namespace hwg_ll
         public MainPage()
         {
             InitializeComponent();
-            GetResponse(city);
+
             GetCoord();
+            GetResponse(city);
 
             Device.StartTimer(new TimeSpan(0, 0, 300), () =>
             {

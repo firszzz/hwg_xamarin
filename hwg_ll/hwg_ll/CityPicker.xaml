@@ -28,7 +28,7 @@
                         <RowDefinition Height="200"/>
                     </Grid.RowDefinitions>
                     <StackLayout x:Name="auto_complete" Grid.Row="0">
-                        <Label x:Name="a" Text="Type your city" TextColor="White" FontSize="32" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                        <Label x:Name="a" Text="Write down the city" TextColor="White" FontSize="32" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
                         <autocomplete:SfAutoComplete x:Name="city_entry"/>
                     </StackLayout>
                     <StackLayout Grid.Row="1" VerticalOptions="End">
