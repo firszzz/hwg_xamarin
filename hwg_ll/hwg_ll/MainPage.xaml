@@ -59,9 +59,11 @@
                     </StackLayout>
                     <StackLayout x:Name="sun_lay" Grid.Row="5">
                         <Grid>
-                            <Image Source="ss_line.png" x:Name="ss_line" HeightRequest="125"/>
                             <StackLayout>
-                                <Image x:Name="sun" Source="sun.png" WidthRequest="50"/>
+                                <Image Source="ss_line.png" x:Name="ss_line" WidthRequest="250"/>
+                            </StackLayout>
+                            <StackLayout x:Name="sun_stack">
+                                <Image x:Name="sun" Source="sun.png" WidthRequest="250"/>
                             </StackLayout>
                         </Grid>
                         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">

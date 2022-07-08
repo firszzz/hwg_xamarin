@@ -9,6 +9,7 @@ namespace hwg_ll
     public partial class MainPage : ContentPage
     {
         float speed;
+        double timezone;
         public string city = new CityData().City;
         readonly APIHelper aPIHelper = new APIHelper();
         CancellationTokenSource cts;
@@ -67,7 +68,7 @@ namespace hwg_ll
 
         public void Anim_propeller(object sender, System.EventArgs e)
         {
-            int final_speed = (int)speed * 1000;
+            int final_speed = (int)speed * 500;
             
             if (cb_anim.IsChecked)
             {
@@ -107,7 +108,7 @@ namespace hwg_ll
         public string ConvertDTime(double unixTimeStamp)
         {
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp + timezone).ToLocalTime();
 
             string dt = dtDateTime.ToString();
             string[] dtL = dt.Split(' ');
@@ -118,7 +119,7 @@ namespace hwg_ll
         public string ConvertSTime(double unixTimeStamp)
         {
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp + timezone).ToLocalTime();
 
             string dt = dtDateTime.ToString();
             string[] dtL = dt.Split(' ');
@@ -146,7 +147,32 @@ namespace hwg_ll
 
         public void CalculateSS(double dt, double sr, double ss)
         {
-            
+            double day_long = ss - sr;
+            double top_day = (ss + sr) / 2;
+            double soft_deg;
+
+            if (dt > sr && dt < ss)
+            {
+                if (dt >= top_day)
+                {
+                    double hard_deg = (int)Math.Ceiling((ss - dt) / 1000);
+                    soft_deg = 180 - (hard_deg * 3 + hard_deg / 2);
+
+                    sun.Rotation = soft_deg;
+                }
+                else if (dt <= top_day)
+                {
+                    double hard_deg = (int)Math.Ceiling((dt - sr) / 1000);
+                    soft_deg = hard_deg * 3 + hard_deg / 2;
+
+                    sun.Rotation = soft_deg;
+                }
+            }
+            else
+            {
+                sun.Rotation = 0;
+                sun.TranslationX = 110;
+            }
         }
 
         public async void GetResponse(string city)
@@ -162,9 +188,10 @@ namespace hwg_ll
 
                 int wind_deg = int.Parse(json["wind"]["deg"].ToString());
 
-                double sunrise = double.Parse(json["sys"]["sunrise"].ToString()) + 36000;
-                double sunset = double.Parse(json["sys"]["sunset"].ToString()) + 36000;
-                double dt = double.Parse(json["dt"].ToString()) + 36000;
+                double sunrise = double.Parse(json["sys"]["sunrise"].ToString());
+                double sunset = double.Parse(json["sys"]["sunset"].ToString());
+                double dt = double.Parse(json["dt"].ToString());
+                timezone = double.Parse(json["timezone"].ToString());
 
                 float tempCel = float.Parse(json["main"]["temp"].ToString());
 
@@ -186,38 +213,7 @@ namespace hwg_ll
                 sunrise_time.Text = ConvertSTime(sunrise);
                 sunset_time.Text = ConvertSTime(sunset);
 
-                if (dt < (sunrise + sunset) / 2)
-                {
-                    if ((sunrise + sunset) / 2 - dt > 13718)
-                    {
-                        sun.TranslationX = -120;
-                        sun.TranslationY = 75;
-                    }
-                    else if ((sunrise + sunset) / 2 - dt < 13718)
-                    {
-                        sun.TranslationX = -55;
-                        sun.TranslationY = 0;
-                    }
-                }
-                else if (dt > (sunrise + sunset) / 2)
-                {
-                    if (dt - (sunrise + sunset) / 2 > 13718)
-                    {
-                        sun.TranslationX = 120;
-                        sun.TranslationY = 75;
-                    }
-                    else if (dt - (sunrise + sunset) / 2 < 13718)
-                    {
-                        sun.TranslationX = 55;
-                        sun.TranslationY = 0;
-                    }
-                }
-
-                if (dt > sunset || dt < sunrise)
-                {
-                    sun.TranslationX = 0;
-                    sun.TranslationY = 100;
-                }
+                CalculateSS(dt, sunrise, sunset);
             }
             else { return; }
 
