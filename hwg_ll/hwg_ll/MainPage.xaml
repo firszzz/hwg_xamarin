@@ -4,6 +4,7 @@
              x:Class="hwg_ll.MainPage">
 
     <StackLayout>
+
         <StackLayout x:Name="newlay">
             <StackLayout.Background>
                 <LinearGradientBrush EndPoint="0,1">
@@ -24,9 +25,9 @@
                         <RowDefinition Height="100"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="70"/>
-                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="70"/>
                         <RowDefinition Height="150"/>
-                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="150"/>
                     </Grid.RowDefinitions>
 
                     <Frame BackgroundColor="Transparent" CornerRadius="0" Grid.Row="0">
@@ -69,13 +70,19 @@
                         </StackLayout>
                     </StackLayout>
                     <StackLayout Grid.Row="6" VerticalOptions="EndAndExpand"  Margin="0, 30, 0, 0">
-                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
-                            <CheckBox x:Name="anim_cb" Color="White" CheckedChanged="Anim_propeller"/>
-                            <Label x:Name="text_cb" Text="Animaton is disabled" VerticalTextAlignment="Center" TextColor="White"/>
-                        </StackLayout>
-                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                            <Button Text="Pick city" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="White" Clicked="PickCity"/>
-                            <Button Text="Share" x:Name="share_btn" Clicked="Share_info" TextColor="White" BackgroundColor="Transparent" BorderColor="White" BorderWidth="1"/>
+                        <StackLayout Orientation="Vertical" HorizontalOptions="Center" VerticalOptions="Center">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                                <CheckBox x:Name="cb_anim" IsChecked="False" CheckedChanged="Anim_propeller" Color="White"/>
+                                <Label x:Name="cb_label" Text="Animation is disabled" TextColor="White" FontSize="16" VerticalTextAlignment="Center"/>
+                            </StackLayout>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Text="Share" x:Name="share_btn" Clicked="Share_info" TextColor="White" BackgroundColor="Transparent" BorderColor="White" BorderWidth="1" Grid.Column="0"/>
+                                <Button Text="Pick city" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="White" Clicked="PickCity" Grid.Column="1"/>
+                            </Grid>
                         </StackLayout>
                     </StackLayout>
                 </Grid>

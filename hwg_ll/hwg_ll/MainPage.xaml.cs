@@ -1,30 +1,64 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Essentials;
-//using System.Threading;
-using System.Timers;
+using System.Threading;
 
 namespace hwg_ll
 {
     public partial class MainPage : ContentPage
     {
         float speed;
+        bool anim = false;
         public string city = new CityData().City;
+        readonly APIHelper aPIHelper = new APIHelper();
 
         private void PickCity(object sender, EventArgs e)
         {
             Navigation.PushModalAsync(new CityPicker());
+
             MessagingCenter.Subscribe<CityData>(this, "ReceiveData", (value) =>
             {
                 city = value.City;
                 GetResponse(city);
             });
+        }
+
+        CancellationTokenSource cts;
+        private async void GetCoord()
+        {
+            try
+            {
+                var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
+                cts = new CancellationTokenSource();
+                var location = await Geolocation.GetLocationAsync(request, cts.Token);
+
+                MessagingCenter.Subscribe<CityData>(this, "ReceiveData", (value) =>
+                {
+                    city = value.City;
+                    GetResponse(city);
+                });
+
+                if (location != null)
+                {
+                    string result = await aPIHelper.Get_city(location.Latitude, location.Longitude);
+                    JObject json = JObject.Parse(result);
+
+                    if (city != json["name"].ToString())
+                    {
+                        CityData cd = new CityData
+                        {
+                            City = json["name"].ToString()
+                        };
+
+                        MessagingCenter.Send<CityData>(cd, "ReceiveData");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public class CityData
@@ -34,18 +68,42 @@ namespace hwg_ll
 
         public async void Anim_propeller(object sender, System.EventArgs e)
         {
-            int final_speed = (int)speed * 1000;
-
-            if (anim_cb.IsChecked)
+            anim = cb_anim.IsChecked;
+            int final_speed = (int)speed * 500;
+            
+            if (anim)
             {
-                text_cb.Text = "Animation is enabled";
-
-                await propeller.RotateTo(360, 800, Easing.Linear);
+                cb_label.Text = "Animation is enabled";
+                rotate();
             }
-            else if (!anim_cb.IsChecked)
+            else if (!anim)
             {
-                text_cb.Text = "Animation is disabled";
+                cb_label.Text = "Animation is disabled";
+                ViewExtensions.CancelAnimations(propeller);
             }
+
+            async void rotate()
+            {
+                while (anim)
+                {
+                    await propeller.RelRotateTo(360, (uint)final_speed);
+                }
+            } 
+        }
+
+        public bool CheckInternetConnection()
+        {
+            var current = Connectivity.NetworkAccess;
+
+            bool res = true;
+
+            if (current != NetworkAccess.Internet)
+            {
+                DisplayAlert("Internet connection", "Inernet connection is disabled", "Ok");
+                res = false;
+            }
+
+            return res;
         }
 
         public string ConvertDTime(double unixTimeStamp)
@@ -89,67 +147,70 @@ namespace hwg_ll
 
         public async void GetResponse(string city)
         {
-            APIHelper aPIHelper = new APIHelper();
-
-            string result = await aPIHelper.Get_response(city);
-            JObject json = JObject.Parse(result);
-
-            string img_icon = "https://openweathermap.org/img/wn/" + json["weather"][0]["icon"].ToString() + "@4x.png";
-            int wind_deg = int.Parse(json["wind"]["deg"].ToString());
-            string wind_speed = json["wind"]["speed"].ToString();
-            double sunrise = double.Parse(json["sys"]["sunrise"].ToString()) + 36000;
-            double sunset = double.Parse(json["sys"]["sunset"].ToString()) + 36000;
-            double dt = double.Parse(json["dt"].ToString()) + 36000;
-
-            speed = float.Parse(wind_speed);
-            city_name.Text = json["name"].ToString();
-            float tempCel = float.Parse(json["main"]["temp"].ToString());
-            temp.Text = Math.Round(tempCel - 273.15, 1).ToString();
-            weather.Text = json["weather"][0]["main"].ToString();
-            img_weather.Source = new UriImageSource
+            if (CheckInternetConnection())
             {
-                CachingEnabled = false,
-                Uri = new System.Uri(img_icon)
-            };
-            datetime.Text = ConvertDTime(dt).ToString();
-            humidity.Text = json["main"]["humidity"].ToString() + "%";
-            wind.Text = json["wind"]["speed"].ToString() + " m/s";
-            wind_dir.Text = FindDirection(wind_deg);
-            arrow.Rotation = wind_deg;
-            sunrise_time.Text = ConvertSTime(sunrise);
-            sunset_time.Text = ConvertSTime(sunset);
+                string result = await aPIHelper.Get_response(city);
+                JObject json = JObject.Parse(result);
 
-            if (dt > sunset || dt < sunrise)
-            {
-                sun_lay.Children.Clear();
+                string img_icon = "https://openweathermap.org/img/wn/" + json["weather"][0]["icon"].ToString() + "@4x.png";
+                int wind_deg = int.Parse(json["wind"]["deg"].ToString());
+                string wind_speed = json["wind"]["speed"].ToString();
+                double sunrise = double.Parse(json["sys"]["sunrise"].ToString()) + 36000;
+                double sunset = double.Parse(json["sys"]["sunset"].ToString()) + 36000;
+                double dt = double.Parse(json["dt"].ToString()) + 36000;
+
+                speed = float.Parse(wind_speed);
+                city_name.Text = json["name"].ToString();
+                float tempCel = float.Parse(json["main"]["temp"].ToString());
+                temp.Text = Math.Round(tempCel - 273.15, 1).ToString();
+                weather.Text = json["weather"][0]["main"].ToString();
+                img_weather.Source = new UriImageSource
+                {
+                    CachingEnabled = false,
+                    Uri = new System.Uri(img_icon)
+                };
+                datetime.Text = ConvertDTime(dt).ToString();
+                humidity.Text = json["main"]["humidity"].ToString() + "%";
+                wind.Text = json["wind"]["speed"].ToString() + " m/s";
+                wind_dir.Text = FindDirection(wind_deg);
+                arrow.Rotation = wind_deg;
+                sunrise_time.Text = ConvertSTime(sunrise);
+                sunset_time.Text = ConvertSTime(sunset);
+
+                if (dt < (sunrise + sunset) / 2)
+                {
+                    if ((sunrise + sunset) / 2 - dt > 13718)
+                    {
+                        sun.TranslationX = -115;
+                        sun.TranslationY = 75;
+                    }
+                    else if ((sunrise + sunset) / 2 - dt < 13718)
+                    {
+                        sun.TranslationX = -55;
+                        sun.TranslationY = 0;
+                    }
+                }
+                else if (dt > (sunrise + sunset) / 2)
+                {
+                    if (dt - (sunrise + sunset) / 2 > 13718)
+                    {
+                        sun.TranslationX = 115;
+                        sun.TranslationY = 75;
+                    }
+                    else if (dt - (sunrise + sunset) / 2 < 13718)
+                    {
+                        sun.TranslationX = 55;
+                        sun.TranslationY = 0;
+                    }
+                }
+
+                if (dt > sunset || dt < sunrise)
+                {
+                    sun.TranslationX = 0;
+                    sun.TranslationY = 100;
+                }
             }
-
-            if (dt < (sunrise + sunset) / 2)
-            {
-                if ((sunrise + sunset) / 2 - dt > 13718)
-                {
-                    sun.TranslationX = -120;
-                    sun.TranslationY = 70;
-                }
-                else if ((sunrise + sunset) / 2 - dt < 13718)
-                {
-                    sun.TranslationX = -60;
-                    sun.TranslationY = 0;
-                }
-            }
-            else if (dt > (sunrise + sunset) / 2)
-            {
-                if (dt - (sunrise + sunset) / 2 > 13718)
-                {
-                    sun.TranslationX = 120;
-                    sun.TranslationY = 70;
-                }
-                else if (dt - (sunrise + sunset) / 2 < 13718)
-                {
-                    sun.TranslationX = 60;
-                    sun.TranslationY = 0;
-                }
-            }
+            else return;
 
             newlay.ResolveLayoutChanges();
         }
@@ -157,8 +218,8 @@ namespace hwg_ll
         public MainPage()
         {
             InitializeComponent();
-
             GetResponse(city);
+            GetCoord();
 
             Device.StartTimer(new TimeSpan(0, 0, 300), () =>
             {

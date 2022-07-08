@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:autocomplete="clr-namespace:Syncfusion.SfAutoComplete.XForms;assembly=Syncfusion.SfAutoComplete.XForms"
+             xmlns:collection="clr-namespace:System.Collections.Generic;assembly=netstandard"
              x:Class="hwg_ll.CityPicker">
     <ContentPage.Content>
 
@@ -19,22 +21,21 @@
                         <GradientStop Color="#3576A3" Offset="1"></GradientStop>
                     </LinearGradientBrush>
                 </Frame.Background>
-                
+
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="500"/>
                         <RowDefinition Height="200"/>
                     </Grid.RowDefinitions>
-                    <StackLayout Grid.Row="0">
+                    <StackLayout x:Name="auto_complete" Grid.Row="0">
                         <Label x:Name="a" Text="Type your city" TextColor="White" FontSize="32" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
-                        <Entry x:Name="city_entry" Text="{ Binding CityName }" TextColor="White" PlaceholderColor="White" BackgroundColor="Transparent"/>
+                        <autocomplete:SfAutoComplete x:Name="city_entry"/>
                     </StackLayout>
                     <StackLayout Grid.Row="1" VerticalOptions="End">
                         <Button Text="Pick city" Clicked="PickCity" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="White" VerticalOptions="EndAndExpand"/>
                     </StackLayout>
                 </Grid>
             </Frame>
-            
         </StackLayout>
         
     </ContentPage.Content>
