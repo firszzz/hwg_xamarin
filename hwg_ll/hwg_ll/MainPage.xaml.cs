@@ -7,19 +7,29 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Essentials;
-using System.Threading;
+//using System.Threading;
+using System.Timers;
 
 namespace hwg_ll
 {
     public partial class MainPage : ContentPage
     {
         float speed;
+        public string city = new CityData().City;
 
         private void PickCity(object sender, EventArgs e)
         {
-            var cityPicker = new CityPicker();
+            Navigation.PushModalAsync(new CityPicker());
+            MessagingCenter.Subscribe<CityData>(this, "ReceiveData", (value) =>
+            {
+                city = value.City;
+                GetResponse(city);
+            });
+        }
 
-            Navigation.PushModalAsync(cityPicker);
+        public class CityData
+        {
+            public string City { get; set; } = "Moscow";
         }
 
         public async void Anim_propeller(object sender, System.EventArgs e)
@@ -77,7 +87,7 @@ namespace hwg_ll
             });
         }
 
-        public async void GetResponse(string city = "Moscow")
+        public async void GetResponse(string city)
         {
             APIHelper aPIHelper = new APIHelper();
 
@@ -148,13 +158,13 @@ namespace hwg_ll
         {
             InitializeComponent();
 
-            GetResponse();
+            GetResponse(city);
 
             Device.StartTimer(new TimeSpan(0, 0, 300), () =>
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    GetResponse();
+                    GetResponse(city);
                 });
 
                 return true;

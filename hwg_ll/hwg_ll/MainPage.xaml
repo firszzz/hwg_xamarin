@@ -71,7 +71,7 @@
                     <StackLayout Grid.Row="6" VerticalOptions="EndAndExpand"  Margin="0, 30, 0, 0">
                         <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
                             <CheckBox x:Name="anim_cb" Color="White" CheckedChanged="Anim_propeller"/>
-                            <Label x:Name="text_cb" Text="disable animation" VerticalTextAlignment="Center" TextColor="White"/>
+                            <Label x:Name="text_cb" Text="Animaton is disabled" VerticalTextAlignment="Center" TextColor="White"/>
                         </StackLayout>
                         <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
                             <Button Text="Pick city" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="White" Clicked="PickCity"/>
